@@ -1,9 +1,10 @@
 import "./App.css";
+import { MapView } from "./components/MapView/MapView";
 
 function App() {
   return (
     <>
-      <div>Hello World</div>
+      <MapView />
     </>
   );
 }
