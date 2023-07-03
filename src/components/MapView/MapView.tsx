@@ -20,11 +20,23 @@ export function MapView() {
       center: [lng, lat],
       zoom: zoom,
     });
+  }, []);
+
+  useEffect(() => {
+    const current = map.current;
+    if (!current) return;
+    current.on("move", () => {
+      setLng(+current.getCenter().lng.toFixed(4));
+      setLat(+current.getCenter().lat.toFixed(4));
+    });
   });
 
   return (
     <div>
       <div ref={mapContainer} style={{ height: "400px" }}></div>
+      <div>
+        Long: {lng}, Lat: {lat}
+      </div>
     </div>
   );
 }
