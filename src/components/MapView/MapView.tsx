@@ -10,7 +10,7 @@ export function MapView() {
   const map = useRef<Map | null>(null);
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
+  // const [zoom, setZoom] = useState(9);
   const [yourLong, setYourLong] = useState(undefined as number | undefined);
   const [yourLate, setYourLat] = useState(undefined as number | undefined);
   const [permissionDenied, setPermissionDenied] = useState(false);
@@ -22,7 +22,7 @@ export function MapView() {
       container: mapContainer.current!,
       style: "mapbox://styles/mapbox/streets-v12",
       center: [lng, lat],
-      zoom: zoom,
+      zoom: 9,
     });
   }, []);
 

@@ -1,4 +1,4 @@
-import { Artifact } from "../types/artifacts";
+// import { Artifact } from "../types/artifacts";
 
 // export function generateArtifact(
 //   longitude: number,
