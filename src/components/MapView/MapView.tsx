@@ -11,6 +11,7 @@ export function MapView() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   // const [zoom, setZoom] = useState(9);
+  const [num, setNum] = useState(0);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
 
@@ -36,6 +37,7 @@ export function MapView() {
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
+        setNum((prev) => prev + 1);
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -72,6 +74,7 @@ export function MapView() {
       <div>
         Your Longitude: {location.longitude} Your Latitude: {location.latitude}
       </div>
+      <div>Num: ${num}</div>
       {permissionDenied && <div>Permission to access location was denied!</div>}
     </div>
   );
