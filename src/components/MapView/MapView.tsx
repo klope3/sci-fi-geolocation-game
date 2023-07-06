@@ -16,7 +16,7 @@ export function MapView() {
   // const [lng, setLng] = useState(initialLong);
   // const [lat, setLat] = useState(initialLat);
   // const [zoom, setZoom] = useState(9);
-  const { playerPosition } = useApp();
+  const { playerPosition, playerPositionAccuracy } = useApp();
 
   // useEffect(() => {
   //   if (map.current) return; // initialize map only once
@@ -79,6 +79,7 @@ export function MapView() {
       <div>
         Your Longitude: {playerPosition.x} Your Latitude: {playerPosition.y}
       </div>
+      <div>Accuracy: {playerPositionAccuracy}</div>
     </div>
   );
 }
