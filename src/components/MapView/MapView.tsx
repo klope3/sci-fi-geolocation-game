@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl, { LngLatLike, Map } from "mapbox-gl";
 import { useApp } from "../AppProvider";
 
 const accesstoken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 if (!accesstoken) console.error("No access token for Mapbox found!");
 else mapboxgl.accessToken = accesstoken;
-const initialLong = -92.4742;
-const initialLat = 42.7293;
+const initialLong = -92.4894;
+const initialLat = 42.7262;
 
 export function MapView() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -34,6 +34,14 @@ export function MapView() {
       setLat(+current.getCenter().lat.toFixed(4));
     });
   });
+
+  useEffect(() => {
+    const newPosition: LngLatLike = {
+      lng: playerPosition.x,
+      lat: playerPosition.y,
+    };
+    map.current?.panTo(newPosition);
+  }, [playerPosition]);
 
   function panBy(latLong: number[]) {
     const point = new mapboxgl.Point(latLong[0], latLong[1]);
