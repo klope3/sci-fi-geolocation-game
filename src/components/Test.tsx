@@ -4,17 +4,20 @@ export function Test() {
   const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      navigator.geolocation.getCurrentPosition((position) => {
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
         setLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
-      });
-    }, 1000);
+      },
+      (error) => {
+        console.error("Error retrieving location:", error);
+      }
+    );
 
     return () => {
-      clearInterval(intervalId);
+      navigator.geolocation.clearWatch(watchId);
     };
   }, []);
 
