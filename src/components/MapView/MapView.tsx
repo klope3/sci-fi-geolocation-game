@@ -1,27 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl, { Map } from "mapbox-gl";
+import { useApp } from "../AppProvider";
 
 const accesstoken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 if (!accesstoken) console.error("No access token for Mapbox found!");
 else mapboxgl.accessToken = accesstoken;
+const initialLong = -92.4742;
+const initialLat = 42.7293;
 
 export function MapView() {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<Map | null>(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
+  const [lng, setLng] = useState(initialLong);
+  const [lat, setLat] = useState(initialLat);
   // const [zoom, setZoom] = useState(9);
-  const [num, setNum] = useState(0);
-  const [permissionDenied, setPermissionDenied] = useState(false);
-  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
+  const { playerPosition } = useApp();
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [lng, lat],
-      zoom: 12,
+      center: [initialLong, initialLat],
+      zoom: 17,
     });
   }, []);
 
@@ -33,26 +34,6 @@ export function MapView() {
       setLat(+current.getCenter().lat.toFixed(4));
     });
   });
-
-  useEffect(() => {
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setNum((prev) => prev + 1);
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      (error) => {
-        if (error.PERMISSION_DENIED) setPermissionDenied(true);
-        console.error("Error retrieving location:", error);
-      }
-    );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
-  }, []);
 
   function panBy(latLong: number[]) {
     const point = new mapboxgl.Point(latLong[0], latLong[1]);
@@ -72,10 +53,8 @@ export function MapView() {
         <button onClick={() => panBy([0, -0.001])}>South</button>
       </div>
       <div>
-        Your Longitude: {location.longitude} Your Latitude: {location.latitude}
+        Your Longitude: {playerPosition.x} Your Latitude: {playerPosition.y}
       </div>
-      <div>Num: ${num}</div>
-      {permissionDenied && <div>Permission to access location was denied!</div>}
     </div>
   );
 }

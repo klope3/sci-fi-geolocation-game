@@ -1,11 +1,13 @@
 import "./App.css";
-// import { MapView } from "./components/MapView/MapView";
-import { Test } from "./components/Test";
+import { MapView } from "./components/MapView/MapView";
+import { AppProvider } from "./components/AppProvider";
 
 function App() {
   return (
     <>
-      <Test />
+      <AppProvider>
+        <MapView />
+      </AppProvider>
     </>
   );
 }
