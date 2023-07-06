@@ -11,10 +11,8 @@ export function MapView() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   // const [zoom, setZoom] = useState(9);
-  const [yourLong, setYourLong] = useState(undefined as number | undefined);
-  const [yourLate, setYourLat] = useState(undefined as number | undefined);
   const [permissionDenied, setPermissionDenied] = useState(false);
-  const [num, setNum] = useState(0);
+  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -22,7 +20,7 @@ export function MapView() {
       container: mapContainer.current!,
       style: "mapbox://styles/mapbox/streets-v12",
       center: [lng, lat],
-      zoom: 9,
+      zoom: 12,
     });
   }, []);
 
@@ -36,32 +34,23 @@ export function MapView() {
   });
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      const interval = setInterval(updatePosition, 1000);
-      return () => clearInterval(interval);
-    } else {
-      console.error("Geolocation not supported.");
-    }
-  }, []);
-
-  function updatePosition() {
-    if (permissionDenied) return;
-
-    navigator.geolocation.getCurrentPosition(
+    const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        setYourLat(position.coords.latitude);
-        setYourLong(position.coords.longitude);
-        setNum((prev) => prev + 1);
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       },
       (error) => {
-        if (error.PERMISSION_DENIED) {
-          setPermissionDenied(true);
-        } else {
-          console.error(error);
-        }
+        if (error.PERMISSION_DENIED) setPermissionDenied(true);
+        console.error("Error retrieving location:", error);
       }
     );
-  }
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
 
   function panBy(latLong: number[]) {
     const point = new mapboxgl.Point(latLong[0], latLong[1]);
@@ -80,11 +69,10 @@ export function MapView() {
         <button onClick={() => panBy([0.001, 0])}>East</button>
         <button onClick={() => panBy([0, -0.001])}>South</button>
       </div>
-      <div>{num}</div>
       <div>
-        Your Longitude: {yourLong !== undefined ? yourLong : "--"} Your
-        Latitude: {yourLate !== undefined ? yourLate : "--"}
+        Your Longitude: {location.longitude} Your Latitude: {location.latitude}
       </div>
+      {permissionDenied && <div>Permission to access location was denied!</div>}
     </div>
   );
 }
